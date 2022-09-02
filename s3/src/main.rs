@@ -23,10 +23,9 @@ async fn main() -> Result<()> {
         .build()?;
 
     ctx.runtime_env()
-        .register_object_store("s3", "datafusion-parquet-testing", Arc::new(s3));
+        .register_object_store("s3", BUCKET_NAME, Arc::new(s3));
 
     let filename = format!("s3://{}/data/alltypes_plain.parquet", BUCKET_NAME);
-    println!("need to fetch: {}", filename);
 
     // define the query using the DataFrame trait
     let df = ctx
