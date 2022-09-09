@@ -1620,6 +1620,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "s3-glob"
+version = "0.1.0"
+dependencies = [
+ "datafusion",
+ "futures",
+ "glob",
+ "itertools",
+ "object_store",
+ "tokio",
+ "url",
+]
+
+[[package]]
 name = "s3-minio"
 version = "0.1.0"
 dependencies = [
