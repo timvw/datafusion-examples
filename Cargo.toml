@@ -2,5 +2,6 @@
 members = [
     "s3",
     "s3-minio",
-    "s3-glob"
+    "s3-glob",
+    "s3-sdk-credentials"
 ]
