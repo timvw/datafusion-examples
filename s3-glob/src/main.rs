@@ -1,22 +1,21 @@
-use datafusion::error::Result;
-use datafusion::prelude::*;
-use object_store::aws::AmazonS3Builder;
-use std::env;
-use std::sync::Arc;
 use datafusion::datasource::listing::{ListingTable, ListingTableConfig, ListingTableUrl};
 use datafusion::error::DataFusionError;
-use glob::Pattern;
-use object_store::ObjectMeta;
-use object_store::path::Path;
-use url::Url;
+use datafusion::error::Result;
+use datafusion::prelude::*;
 use futures::{stream::BoxStream, StreamExt, TryStreamExt};
+use glob::Pattern;
 use itertools::Itertools;
+use object_store::aws::AmazonS3Builder;
+use object_store::path::Path;
+use object_store::ObjectMeta;
+use std::env;
+use std::sync::Arc;
+use url::Url;
 
 // This example demonstrates executing a simple query against an Arrow data source (Parquet) and
 // fetching results, using the DataFrame trait
 #[tokio::main]
 async fn main() -> Result<()> {
-
     // create local execution context
     let ctx = SessionContext::new();
 
@@ -41,8 +40,7 @@ async fn main() -> Result<()> {
 
     let (prefix, glob) = match split_glob_expression(s) {
         Some((prefix, glob)) => {
-            let glob = Pattern::new(glob)
-                .map_err(|e| DataFusionError::External(Box::new(e)))?;
+            let glob = Pattern::new(glob).map_err(|e| DataFusionError::External(Box::new(e)))?;
             (prefix, Some(glob))
         }
         None => (s, None),
@@ -60,7 +58,9 @@ async fn main() -> Result<()> {
     println!("prefix path: {}", prefix_path);
 
     let base_url = if prefix_path.as_ref().len() > 0 {
-        url.as_str().strip_suffix(&format!("{}/", prefix_path.as_ref())).unwrap()
+        url.as_str()
+            .strip_suffix(&format!("{}/", prefix_path.as_ref()))
+            .unwrap()
     } else {
         url.as_str()
     };
@@ -69,9 +69,13 @@ async fn main() -> Result<()> {
     let store = ctx.runtime_env().object_store(&prefix_url)?;
     println!("store: {}", store);
 
-    let listing = store.list(Some(&prefix_path)).await.expect("should find files with prefix");
+    let listing = store
+        .list(Some(&prefix_path))
+        .await
+        .expect("should find files with prefix");
 
-    let listing2: BoxStream<Result<ObjectMeta>> = listing.map_err(Into::into)
+    let listing2: BoxStream<Result<ObjectMeta>> = listing
+        .map_err(Into::into)
         .try_filter(move |meta| {
             let glob_match = match &glob {
                 None => true,
@@ -91,28 +95,29 @@ async fn main() -> Result<()> {
     let metas: Vec<ObjectMeta> = listing2.try_collect().await?;
     println!("items: {:?}", metas);
 
-    let lp: Vec<_> = metas.iter().map(|om| {
-        let fp = format!("{}{}", base_url, om.location.as_ref());
-        ListingTableUrl::parse(fp).unwrap()
-    }).collect();
+    let lp: Vec<_> = metas
+        .iter()
+        .map(|om| {
+            let fp = format!("{}{}", base_url, om.location.as_ref());
+            ListingTableUrl::parse(fp).unwrap()
+        })
+        .collect();
     println!("files: {:?}", lp);
 
     let mut config = ListingTableConfig::new_with_multi_paths(lp);
     config = config.infer_options(&ctx.state.read()).await?;
     config = config.infer_schema(&ctx.state.read()).await?;
 
-
-
     let provider = ListingTable::try_new(config)?;
 
-    let df = ctx.read_table(Arc::new(provider)).unwrap()
+    let df = ctx
+        .read_table(Arc::new(provider))
+        .unwrap()
         .select_columns(&["id", "bool_col", "timestamp_col"])?
-       .filter(col("id").gt(lit(1)))?;
+        .filter(col("id").gt(lit(1)))?;
 
     // print the results
     df.show().await?;
-
-
 
     Ok(())
 }

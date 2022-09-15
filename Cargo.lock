@@ -1973,8 +1973,6 @@ dependencies = [
 name = "s3-glob"
 version = "0.1.0"
 dependencies = [
- "aws-config",
- "aws-types",
  "datafusion",
  "futures",
  "glob",
@@ -1988,6 +1986,17 @@ dependencies = [
 name = "s3-minio"
 version = "0.1.0"
 dependencies = [
+ "datafusion",
+ "object_store",
+ "tokio",
+]
+
+[[package]]
+name = "s3-sdk-credentials"
+version = "0.1.0"
+dependencies = [
+ "aws-config",
+ "aws-types",
  "datafusion",
  "object_store",
  "tokio",

@@ -1,14 +1,13 @@
 use datafusion::error::Result;
 use datafusion::prelude::*;
 use object_store::aws::AmazonS3Builder;
-use std::sync::Arc;
 use object_store::ObjectStore;
+use std::sync::Arc;
 
 // This example demonstrates executing a simple query against an Arrow data source (Parquet) and
 // fetching results, using the DataFrame trait
 #[tokio::main]
 async fn main() -> Result<()> {
-
     // create local execution context
     let ctx = SessionContext::new();
 
@@ -37,8 +36,6 @@ async fn main() -> Result<()> {
 
     // print the results
     df.show().await?;
-
-
 
     Ok(())
 }

@@ -8,7 +8,6 @@ use std::sync::Arc;
 // fetching results, using the DataFrame trait
 #[tokio::main]
 async fn main() -> Result<()> {
-
     // create local execution context
     let ctx = SessionContext::new();
 
@@ -36,8 +35,6 @@ async fn main() -> Result<()> {
 
     // print the results
     df.show().await?;
-
-
 
     Ok(())
 }
