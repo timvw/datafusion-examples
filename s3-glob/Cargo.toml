@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 datafusion = { version = "11.0.0" }
 object_store = { version = "0.4.0", features = ["aws"]}
-tokio = { version = "1.0", features = ["macros", "rt", "rt-multi-thread", "sync", "parking_lot"] }
+tokio = { version = "1.20", features = ["macros", "rt", "rt-multi-thread", "sync", "parking_lot"] }
 glob = "0.3.0"
 url = "2.2"
 futures = "0.3"
